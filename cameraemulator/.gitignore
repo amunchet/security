@@ -1,0 +1,13 @@
+# Pycharm
+.idea
+
+# Project files
+image.jpg
+
+# Python files
+__pycache__
+
+# Pytest
+.pytest_cache
+.coverage
+htmlcov

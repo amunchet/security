@@ -1,0 +1,11 @@
+# Pycharm
+.idea
+
+# Python files
+__pycache__
+
+# Pytest
+.pytest_cache
+
+# db file
+app.db

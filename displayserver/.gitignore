@@ -1,0 +1,15 @@
+# Pycharm
+.idea
+
+# Python files
+__pycache__
+*.pyc
+
+# Pytest
+.pytest_cache
+.coverage
+htmlcov
+coverage.xml
+
+# db file
+app.db

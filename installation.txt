@@ -1,0 +1,21 @@
+SUDO USER (mark): sudo adduser sammy
+SUDO USER (mark): usermod -aG sudo sammy
+
+NEW USER (sammy): mkdir -p ftp/data
+
+SUDO USER (mark): sudo chmod a-w /home/sammy/ftp
+SUDO USER (mark): sudo chown -R sammy:sammy /home/sammy/ftp/data
+
+NEW USER (sammy): cd
+NEW USER (sammy): mkdir camerasystem
+NEW USER (sammy): git clone git@bitbucket.org:marcellomon/security-system.git
+NEW USER (sammy): cd security-system
+NEW USER (sammy): chmod +x clone-repos.sh
+NEW USER (sammy): ./clone-repos.sh
+NEW USER (sammy): ** modify docker-compose ***
+NEW USER (sammy): sudo usermod -aG docker ${USER}
+NEW USER (sammy): ** logout and login **
+NEW USER (sammy): docker-compose up --build
+
+
+lets check the backup filemanagement which now runs every minute..

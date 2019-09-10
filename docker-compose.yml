@@ -1,0 +1,89 @@
+version: '3.5'
+services:
+  cameraemulator:
+    build:
+      context: ../cameraemulator
+    image: cameraemulator:latest
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PORT=5000
+      - FTP_SUPPORTED=false
+      - CAM_NAME=camera_1
+  cameraemulatorftp:
+    build:
+      context: ../cameraemulator
+    image: cameraemulator:latest
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PORT=5001
+      - FTP_SUPPORTED=true
+      - FTP_HOST=ftpserver
+      - FTP_USER=admin
+      - FTP_PASSWORD=pass
+      - CAM_NAME=camera_2
+  displayserverbackend:
+    build:
+      context: ../displayserverbackend
+      args:
+        - USER_ID=1000
+        - GROUP_ID=1000
+        - TIMEZONE=Asia/Taipei
+        - FTP_USER=admin
+        - FTP_PASSWORD=pass
+    image: displayserverbackend:latest
+    ports:
+      -  10001:10001
+    depends_on:
+      - database
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://test:password@database:5432/ipcameras
+      - FTP_HOST=ftpserver
+      - LOG_TO_STDOUT=true
+    volumes:
+      - ../displayserverbackend/app:/home/appuser/app
+      - /home/mark/ftp/data:/home/appuser/data
+  displayserverfrontend:
+    build:
+      context: ../displayserverfrontend
+    image: displayserverfrontend:latest
+    ports:
+      - 9000:9000
+    environment:
+      - DATABASE_URL=postgresql://test:password@database:5432/ipcameras
+    volumes:
+      - ../displayserverfrontend/app:/home/appuser/app
+  database:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=ipcameras
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db_volume:/var/lib/postgres
+  ftpserver:
+    build:
+      context: ../docker-vsftpd
+      dockerfile: ./Dockerfile
+      args:
+        USER_ID: 1000
+        GROUP_ID: 1000
+    image: ftpserver:latest
+    container_name: vsftpd
+    ports:
+      - 0.0.0.0:21:21
+      - 0.0.0.0:20:20
+      - 21100-21110:21100-21110
+    restart: always
+    environment:
+      - FTP_USER=admin
+      - FTP_PASS=pass
+    volumes:
+      - /home/mark/ftp/data:/home/vsftpd
+volumes:
+  db_volume:

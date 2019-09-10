@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Cameras:</h1>
+    <ul id="imagesList"></ul>
+    <br>
+    <p>Average ping latency: <b><span id="ping-pong"></span>ms</b></p>
+
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+    <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+            namespace = '/test';
+
+            // Connect to the Socket.IO server.
+            console.log('connecting to the server')
+            var socket = io.connect(location.protocol + '//0.0.0.0:' + 10001 + namespace);
+
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });
+
+            socket.on('server_event', function(msg) {
+              console.log(msg.data+" "+msg.count);
+            });
+
+            socket.on('camera_stream', function(msg) {
+              for (i = 0; i < msg.length; i++) {
+                console.log("camera id: "+msg[i].camera_id+" ");
+                var cam_id = msg[i].camera_id;
+                var cam_name = msg[i].camera_name;
+                if($("#camera_" + cam_id).length == 0) {
+                    $('#imagesList').append('<li>'+cam_name+'</li>');
+                    $('#imagesList').append('<li><img id="'+"camera_"+cam_id+'" src="' + "data:image/jpeg;base64,"+msg[i].image_data + '" /></li>');
+                }else{
+                    $("#camera_" + cam_id).attr("src", "data:image/jpeg;base64,"+msg[i].image_data);
+                }
+              }
+            });
+
+
+            // Calculate latency
+            var ping_pong_times = [];
+            var start_time;
+            window.setInterval(function() {
+                start_time = (new Date).getTime();
+                socket.emit('my_ping');
+            }, 1000);
+
+            socket.on('my_pong', function() {
+                var latency = (new Date).getTime() - start_time;
+                ping_pong_times.push(latency);
+                ping_pong_times = ping_pong_times.slice(-30); // keep last 30 samples
+                var sum = 0;
+                for (var i = 0; i < ping_pong_times.length; i++)
+                    sum += ping_pong_times[i];
+                $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
+            });
+        });
+    </script>
+{% endblock %}
