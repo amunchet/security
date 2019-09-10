@@ -2,7 +2,7 @@ version: '3.5'
 services:
   cameraemulator:
     build:
-      context: ../cameraemulator
+      context: cameraemulator
     image: cameraemulator:latest
     environment:
       - PYTHONUNBUFFERED=1
@@ -11,7 +11,7 @@ services:
       - CAM_NAME=camera_1
   cameraemulatorftp:
     build:
-      context: ../cameraemulator
+      context: cameraemulator
     image: cameraemulator:latest
     environment:
       - PYTHONUNBUFFERED=1
@@ -23,7 +23,7 @@ services:
       - CAM_NAME=camera_2
   displayserverbackend:
     build:
-      context: ../displayserverbackend
+      context: displayserverbackend
       args:
         - USER_ID=1000
         - GROUP_ID=1000
@@ -41,18 +41,18 @@ services:
       - FTP_HOST=ftpserver
       - LOG_TO_STDOUT=true
     volumes:
-      - ../displayserverbackend/app:/home/appuser/app
+      - ./displayserverbackend/app:/home/appuser/app
       - /home/mark/ftp/data:/home/appuser/data
   displayserverfrontend:
     build:
-      context: ../displayserverfrontend
+      context: displayserverfrontend
     image: displayserverfrontend:latest
     ports:
       - 9000:9000
     environment:
       - DATABASE_URL=postgresql://test:password@database:5432/ipcameras
     volumes:
-      - ../displayserverfrontend/app:/home/appuser/app
+      - ./displayserverfrontend/app:/home/appuser/app
   database:
     container_name: postgres
     image: postgres:latest
@@ -68,7 +68,7 @@ services:
       - ./db_volume:/var/lib/postgres
   ftpserver:
     build:
-      context: ../docker-vsftpd
+      context: docker-vsftpd
       dockerfile: ./Dockerfile
       args:
         USER_ID: 1000
@@ -84,6 +84,6 @@ services:
       - FTP_USER=admin
       - FTP_PASS=pass
     volumes:
-      - /home/mark/ftp/data:/home/vsftpd
+      - ./ftp/data:/home/vsftpd
 volumes:
   db_volume:

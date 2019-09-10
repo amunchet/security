@@ -21,6 +21,7 @@ COPY displayserverfrontend.py config.py boot.sh ./
 ENV FLASK_APP displayserverfrontend.py
 
 RUN chown -R appuser:appuser ./
+RUN chmod +x ./boot.sh
 USER appuser
 
 ENTRYPOINT ["./boot.sh"]

@@ -11,9 +11,11 @@ RUN venv/bin/pip install -r requirements.txt
 COPY app app
 COPY cameraemulator.py config.py boot.sh ./
 
+
 ENV FLASK_APP cameraemulator.py
 
 RUN chown -R appuser:appuser ./
 USER appuser
 
+RUN chmod +x ./boot.sh
 ENTRYPOINT ["./boot.sh"]

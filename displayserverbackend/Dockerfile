@@ -43,6 +43,7 @@ RUN chown -R appuser:appuser /home/appuser
 # config cron for the user appuser
 USER appuser
 RUN chmod +x filemanagement.py
+RUN chmod +x ./boot.sh
 # run backup every 10 minutes
 RUN echo -e "*/10 * * * * source /home/appuser/venv/bin/activate && source /home/appuser/dbenv && python3.6 /home/appuser/filemanagement.py -d \"/home/appuser/data/${FTP_USER}\" >> /tmp/backup.log 2>&1 \n" > mycron
 # create mising folders every minute
