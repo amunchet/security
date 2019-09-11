@@ -25,8 +25,8 @@ services:
     build:
       context: displayserverbackend
       args:
-        - USER_ID=1000
-        - GROUP_ID=1000
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
         - TIMEZONE=Asia/Taipei
         - FTP_USER=admin
         - FTP_PASSWORD=pass
@@ -42,7 +42,7 @@ services:
       - LOG_TO_STDOUT=true
     volumes:
       - ./displayserverbackend/app:/home/appuser/app
-      - /home/mark/ftp/data:/home/appuser/data
+      - ${DATA_DIR}:/home/appuser/data
   displayserverfrontend:
     build:
       context: displayserverfrontend
@@ -71,8 +71,8 @@ services:
       context: docker-vsftpd
       dockerfile: ./Dockerfile
       args:
-        USER_ID: 1000
-        GROUP_ID: 1000
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
     image: ftpserver:latest
     container_name: vsftpd
     ports:
@@ -84,6 +84,6 @@ services:
       - FTP_USER=admin
       - FTP_PASS=pass
     volumes:
-      - ./ftp/data:/home/vsftpd
+      - ${DATA_DIR}:/home/vsftpd
 volumes:
   db_volume:
