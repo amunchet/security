@@ -1,0 +1,3 @@
+[submodule "docker-vsftpd"] 
+  path = docker-vsftpd 
+  url = https://github.com/fauria/docker-vsftpd.git
