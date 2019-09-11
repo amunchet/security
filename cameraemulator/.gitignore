@@ -2,7 +2,7 @@
 .idea
 
 # Project files
-image.jpg
+#generated-image/image.jpg
 
 # Python files
 __pycache__
