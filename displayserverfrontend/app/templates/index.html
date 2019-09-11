@@ -20,8 +20,6 @@
 
             // Connect to the Socket.IO server.
             console.log('connecting to the server')
-		console.log('location')
-		console.log(location)
             var socket = io.connect(location.protocol + '//' + location.hostname+ ":" + 10001 + namespace);
 
             socket.on('connect', function() {
