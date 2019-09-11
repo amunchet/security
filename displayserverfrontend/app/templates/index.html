@@ -20,7 +20,7 @@
 
             // Connect to the Socket.IO server.
             console.log('connecting to the server')
-            var socket = io.connect(location.protocol + '//0.0.0.0:' + 10001 + namespace);
+            var socket = io.connect(location.protocol + '//' + location.hostname+ ":" + 10001 + namespace);
 
             socket.on('connect', function() {
                 socket.emit('my_event', {data: 'I\'m connected!'});
